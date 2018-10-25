@@ -24,5 +24,10 @@ setup(
         'numpy',
         'matplotlib',
         'requests'
-    ]
+    ],
+    include_package_data=True,
+    package_data={
+        'data':
+             ['data/contaminants.fasta']
+    }
 )
