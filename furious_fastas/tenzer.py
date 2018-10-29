@@ -37,7 +37,7 @@ def update_fastas(db_path, verbose=True):
     if exists(recent):
         # need to move the recent files into the older database
         # assume that the name will start with 2...
-        old_project = glob("/Users/matteo/Projects/furious_fastas/py_data/DB/recent/fastas_*")[0]
+        old_project = glob(join(recent,"fastas_*"))[0]
         mv(src=old_project, dst=old)
     mkdir(newest)
 
