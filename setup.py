@@ -29,5 +29,8 @@ setup(
     package_data={
         'data':
              ['data/contaminants.fasta']
-    }
+    },
+    scripts = [
+        "bin/update_tenzer"
+    ]
 )

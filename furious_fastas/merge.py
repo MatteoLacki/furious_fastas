@@ -23,7 +23,10 @@ def merge_files(paths, out_path, **kwds):
                 target.write(source.read())
 
 
-def merge_sequence_files(paths, out_path, input_type="fasta"):
+def merge_sequence_files(paths,
+                         out_path,
+                         input_type="fasta"):
+    """Merge """
     """Merge sequence files into one, nicely parsable file."""
     all_sequences = chain.from_iterable(SeqIO.parse(p, input_type) for p in paths)
     SeqIO.write(all_sequences, out_path, input_type)
