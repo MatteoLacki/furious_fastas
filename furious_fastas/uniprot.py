@@ -8,3 +8,4 @@ uniprot_url = {
     "mouse": _query_prepend + "reviewed:yes+AND+organism:10090&format=fasta",
     "leishmania" : _query_prepend + "organism:5664&format=fasta"
 }
+

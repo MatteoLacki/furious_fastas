@@ -31,6 +31,7 @@ setup(
              ['data/contaminants.fasta']
     },
     scripts = [
-        "bin/update_tenzer"
+        "bin/update_tenzer",
+        "bin/update_peaks"
     ]
 )

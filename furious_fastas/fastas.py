@@ -76,10 +76,10 @@ class Contaminants(SimpleFastas):
         here = path.abspath(path.dirname(__file__))
         self.read(pjoin(here, "data/contaminants.fasta")) 
         self.name = "contaminants"
+        self._reversed = "not reversed"
 
     def __repr__(self):
-        reversed = "reversed" if self.reversed else "not reversed"
-        return "Contaminants, {}.\n{}".format(reversed, super().__repr__())
+        return "Contaminants, {}.\n{}".format(self._reversed, super().__repr__())
 
 default_contaminants = Contaminants()
 
@@ -87,7 +87,7 @@ default_contaminants = Contaminants()
 class Fastas(SimpleFastas):
     def __init__(self):
         super().__init__()
-        self._contaminants = "no contaminants"
+        self._contaminated = False 
 
     def download_from_uniprot(self, uniprot_query=""):
         """Download the query/species sequences from Uniprot.
@@ -109,26 +109,22 @@ class Fastas(SimpleFastas):
         with open(path, "w") as f:
             f.write(self.original_file)
 
-    def add_contaminants(self, contaminants=""):
+    def add_contaminants(self, contaminants=default_contaminants):
         """Add contaminants to the fastas.
 
         Arguments
         =========
-        contaminants : Iterable of fasta SeqRecords alla Biopython.
+        contaminants : Fastas
             The input contaminants. By default, we use Tenzer's contaminants.
             I mean, the ones used in his groups, not biblically his.
         """
-        if not contaminants:
-            contaminants = default_contaminants
-
-        if self._contaminants == "no contaminants":
+        if not self._contaminated:
             self.fastas.extend(contaminants)
-            self._contaminants = "with contaminants"
+            self._contaminated = True
 
     def __repr__(self):
-        return "Fastas, {}, {}.\n{}".format(self._contaminants,
-                                            self._reversed,
-                                            self._seq_repr())
+        c = 'w/ contaminants' if self.contaminated else 'w/o contaminants'
+        return "Fastas, {}, {}.\n{}".format(c, self._reversed, self._seq_repr())
 
 
 
@@ -152,8 +148,9 @@ class NamedFastas(Fastas):
         self.fastas = list(SeqIO.parse(io.StringIO(self.original_file), "fasta"))
 
     def __repr__(self):
+        c = 'w/ contaminants' if self.contaminated else 'w/o contaminants'
         return "{} fastas, {}, {}.\n{}".format(self.name,
-                                               self._contaminants,
+                                               c,
                                                self._reversed,
                                                self._seq_repr())
 
