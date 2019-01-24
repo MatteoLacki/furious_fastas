@@ -36,6 +36,10 @@ class SimpleFastas(object):
         """Return the number of sequences in the fasta file.""" 
         return len(self.fastas)
 
+    def __getitem__(self, key):
+        """Return the key-th fasta sequence."""
+        return self.fastas[key]
+
     def _seq_repr(self):
         fasta_cnt = len(self.fastas)
         if fasta_cnt == 0:
@@ -53,7 +57,7 @@ class SimpleFastas(object):
 
     def reverse(self):
         """Add reversed sequences to the ones already present."""
-        raise NotImplemented
+        raise NotImplementedError
         if self._reversed == "not reversed":
             #TODO: reverse ...
             # ...
@@ -78,7 +82,6 @@ class Contaminants(SimpleFastas):
         return "Contaminants, {}.\n{}".format(reversed, super().__repr__())
 
 default_contaminants = Contaminants()
-
 
 
 class Fastas(SimpleFastas):
