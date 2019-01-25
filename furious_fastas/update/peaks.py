@@ -29,7 +29,7 @@ def update_peaks(db_path, species2url, contaminants=conts, verbose=True):
     mkdir(current, exist_ok=True)
     for f in ls(current):
         mv(src=join(current, f), dst=old)
-    now = str(datetime.now()).replace(" ", "_").split('.')[0]
+    now = str(datetime.now()).replace(" ", "_").split('.')[0].replace(":","-")
     if verbose:
         print("Downloading files from Uniprot.")
     for name, url in species2url:

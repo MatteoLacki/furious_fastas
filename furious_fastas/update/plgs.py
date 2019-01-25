@@ -29,7 +29,7 @@ def update_plgs(db_path,
     """
     if verbose:
         print("Creating necessary folders.")
-    now = str(datetime.now()).replace(" ", "_").split('.')[0]
+    now = str(datetime.now()).replace(" ", "_").split('.')[0].replace(":","-")
     folder = join(db_path,now)
     original = join(folder,'original')
     with_conts = join(folder,'with_contaminants')
