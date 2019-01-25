@@ -5,8 +5,8 @@ from os.path import join as pjoin
 from os import path
 import requests
 
-from furious_fastas.uniprot import uniprot_url
-
+from .uniprot import uniprot_url
+from .parse.fastas import parse
 
 
 class SimpleFastas(object):
@@ -15,8 +15,10 @@ class SimpleFastas(object):
         self._reversed = "not reversed"
 
     def read(self, path):
-        """Read the fastas."""
-        self.fastas = list(SeqIO.parse(path, "fasta"))
+        """Read the fastas from file."""
+        with open(path, 'r') as f:
+            fastas = f.read()
+        self.fastas = list(parse(fastas))
 
     def write(self, path, original = False):
         """Write file under the given path.
