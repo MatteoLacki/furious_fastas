@@ -75,13 +75,3 @@ class Fastas(object):
         res = self.copy()
         res.append(other)
         return res
-
-
-
-
-# human = NamedFastas("human")
-# ecoli = NamedFastas("ecoli")
-# wheat = NamedFastas("wheat")
-# mouse = NamedFastas("mouse")
-# yeast = NamedFastas("yeast")
-# leishmania = NamedFastas("leishmania")
