@@ -16,6 +16,3 @@ def download(url):
     """
     fastas = requests.get(url).text
     return Fastas(list(parse(fastas)))
-
-def test_download():
-    pass

@@ -35,7 +35,8 @@ class Fastas(object):
 
     def __iter__(self):
         """Iterate over sequences."""
-        return iter(self.fastas)
+        for f in self.fastas:
+            yield f
 
     def __len__(self):
         """Return the number of sequences in the fasta file.""" 
@@ -50,70 +51,32 @@ class Fastas(object):
 
     def reverse(self):
         """Produce new Fastas containing reversed copy of sequences."""
+        #TODO: modify the header
         rev_self = Fastas()
         return rev_self
 
+    def copy(self):
+        r = Fastas()
+        for f in self:
+            r.fastas.append(f.copy())
+        return r
+
+    def append(self, other):
+        """Append copies of fastas."""
+        for f in other:
+            self.fastas.append(f.copy())
+
+    def __add__(self, other):
+        """Add two fastas.
+
+        Args:
+            other (Fastas): The other fastas, e.g. contaminants.
+        """
+        res = self.copy()
+        res.append(other)
+        return res
 
 
-# class Contaminants(SimpleFastas):
-#     """A class representing the contaminants.
-
-#     This class cannot be downloaded from Uniprot.
-#     But we give you some common contaminants for free.
-#     """
-#     def __init__(self):
-#         here = path.abspath(path.dirname(__file__))
-#         self.read(pjoin(here, "data/contaminants.fasta")) 
-#         self.name = "contaminants"
-#         self._reversed = "not reversed"
-
-#     def __repr__(self):
-#         return "Contaminants ({})".format(len(self))
-
-# default_contaminants = Contaminants()
-
-
-
-    # def add_contaminants(self, contaminants=default_contaminants):
-    #     """Add contaminants to the fastas.
-
-    #     Arguments
-    #     =========
-    #     contaminants : Fastas
-    #         The input contaminants. By default, we use Tenzer's contaminants.
-    #         I mean, the ones used in his groups, not biblically his.
-    #     """
-    #     if not self._contaminated:
-    #         self.fastas.extend(contaminants)
-    #         self._contaminated = True
-
-
-
-# class NamedFastas(Fastas):
-#     def __init__(self, name):
-#         super().__init__()
-#         self.name = name
-
-#     def download_from_uniprot(self, uniprot_query=""):
-#         """Download the query/species sequences from Uniprot.
-
-#         Arguments
-#         =========
-#         uniprot_query : str
-#             The url to use to download the data from Uniprot.
-#             If not supplied, defaults to all reviewed human proteins found at
-#             http://www.uniprot.org/uniprot/?query=reviewed:yes+AND+organism:9606&format=fasta
-#         """
-#         self.uniprot_query = uniprot_query if uniprot_query else uniprot_url[self.name]
-#         self.original_file = requests.get(self.uniprot_query).text
-#         self.fastas = list(SeqIO.parse(io.StringIO(self.original_file), "fasta"))
-
-#     def __repr__(self):
-#         c = 'w/ contaminants' if self.contaminated else 'w/o contaminants'
-#         return "{} fastas, {}, {}.\n{}".format(self.name,
-#                                                c,
-#                                                self._reversed,
-#                                                self._seq_repr())
 
 
 # human = NamedFastas("human")
@@ -122,18 +85,3 @@ class Fastas(object):
 # mouse = NamedFastas("mouse")
 # yeast = NamedFastas("yeast")
 # leishmania = NamedFastas("leishmania")
-
-
-
-# def save(fastas, out_path):
-#     """Save fasta sequences into one, nicely parsable fasta file.
-
-#     Arguments
-#     =========
-#     fastas : list of furious_fastas.fastas.Fastas
-#         A list of fastas to merge.
-#     out_path : str
-#         A path where the merged fastas should be saved as one bigger fasta file.
-#     """
-#     all_sequences = chain.from_iterable(f for f in fastas)
-#     SeqIO.write(all_sequences, out_path, "fasta")

@@ -11,3 +11,5 @@ def get_tenzer_contaminants():
     conts = Fastas()
     conts.read(path)
     return conts
+
+conts = get_tenzer_contaminants()
