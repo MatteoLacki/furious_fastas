@@ -5,7 +5,6 @@ def parse(fastas):
     ff = fastas.split(">")[1:]
     ff = [">"+i for i in ff]
     for f in ff:
-        f = ff[0]
         f = f.split("\n")
         header = f[0]
         sequence = "".join(f[1:])

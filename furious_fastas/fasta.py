@@ -1,11 +1,11 @@
 class Fasta(object):
     """Class representing one particular fasta object."""
     def __init__(self, header, sequence):
-        self.h = header
-        self.s = sequence
+        self.header = header
+        self.sequence = sequence
 
     def __repr__(self):
-        return "Fasta {}".format(self.h)
+        return "Fasta {}".format(self.header)
 
     def __str__(self):
-        return self.s
+        return self.sequence
