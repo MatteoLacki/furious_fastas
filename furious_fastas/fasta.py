@@ -9,3 +9,7 @@ class Fasta(object):
 
     def __str__(self):
         return self.sequence
+
+    def reverse(self):
+        new_header = self.header
+        return Fasta(new_header, self.sequence[::-1])
