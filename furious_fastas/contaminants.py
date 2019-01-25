@@ -15,5 +15,5 @@ from .parse.fastas import parse
 #     # conts.read(path)
 #     # return conts
 #     return 
-   
+
 conts = Fastas(parse(tenzer_contaminants))
