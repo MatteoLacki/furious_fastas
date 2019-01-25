@@ -22,8 +22,7 @@ setup(
         'Topic :: Scientific/Engineering :: Chemistry',
         'Programming Language :: Python :: 3.6'],
     install_requires=[
-        'requests',
-        'biopython'
+        'requests'
     ],
     include_package_data=True,
     package_data={
@@ -31,7 +30,6 @@ setup(
              ['data/contaminants.fasta']
     },
     scripts = [
-        "bin/update_tenzer",
-        "bin/update_peaks"
+        "bin/update_fastas"
     ]
 )

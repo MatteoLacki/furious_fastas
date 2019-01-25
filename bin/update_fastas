@@ -1,0 +1,17 @@
+#!/usr/bin/env python3
+import argparse
+from furious_fastas.update.plgs import update_plgs
+from furious_fastas.update.peaks import update_peaks
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Update the fastas for the Protein Light Global Server.')
+    parser.add_argument("db_path",
+                        help="Path to the folder treated as database.")
+    parser.add_argument("species2url_path",
+                        help="Path to the file mapping species names to urls.")
+    parser.add_argument("db_format",
+                        help="peaks or plgs.",
+                        choices=['plgs', 'peaks'])
+    args = parser.parse_args()
+    print(args.__dict__)
+    # update(db_path = args.db_path)
