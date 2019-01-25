@@ -25,10 +25,10 @@ setup(
         'requests'
     ],
     include_package_data=True,
-    package_data={
-        'data':
-             ['data/contaminants.fasta']
-    },
+    # package_data={
+    #     'data':
+    #          ['data/contaminants.fasta']
+    # },
     scripts = [
         "bin/update_fastas"
     ]
