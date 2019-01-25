@@ -51,8 +51,9 @@ class Fastas(object):
 
     def reverse(self):
         """Produce new Fastas containing reversed copy of sequences."""
-        #TODO: modify the header
-        rev_self = Fastas()
+        rev_self = self.copy()
+        for f in self:
+            rev_self.fastas.append(f.reverse())
         return rev_self
 
     def copy(self):

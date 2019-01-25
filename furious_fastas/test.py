@@ -20,6 +20,14 @@ path2human = "/home/matteo/Projects/furious_fastas/4peaks/human.fasta"
 
 from furious_fastas.parse.species2uniprot import parse
 from furious_fastas.update.peaks import update_peaks
+from furious_fastas.update.plgs import update_plgs
 
-s2u = list(parse("/home/matteo/Projects/furious_fastas/4peaks/s2u0"))
-update_peaks("/home/matteo/Projects/furious_fastas/4peaks/db", s2u)
+s2u = list(parse("/home/matteo/Projects/furious_fastas/4peaks/s2u2"))
+update_plgs("/home/matteo/Projects/furious_fastas/4peaks/db2", s2u)
+
+
+db_path = "/home/matteo/Projects/furious_fastas/4peaks/db2"
+species2url = s2u
+
+from furious_fastas.contaminants import conts
+from furious_fastas.download import download
