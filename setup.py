@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 setup(
     name='furious_fastas',
     packages=find_packages(),
-    version='0.0.4',
+    version='0.0.5',
     description='Module to update the fastas.',
     long_description='A simple project aiming at ordering the update of the local fasta DB, as done in the Stefan Tenzer group.',
     author='Mateusz Krzysztof Łącki',
