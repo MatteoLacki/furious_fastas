@@ -40,7 +40,7 @@ def update_peaks(db_path, species2url, contaminants=conts, verbose=True):
                                                        name,
                                                        reviewed,
                                                        str(len(fastas)))
-        fastas.write(join(current,file))
+        contaminated_fastas.write(join(current,file))
         if verbose:
             print("\t{} x".format(name))
     if verbose:
