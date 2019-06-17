@@ -4,7 +4,7 @@ from .parse.fastas import parse
 from .fastas import Fastas
 
 
-def download(url):
+def download(url, raw=False):
     """Download the query/species sequences from Uniprot.
 
     Arguments
@@ -15,4 +15,7 @@ def download(url):
         is the one to retrieve all reviewed human proteins.
     """
     fastas = requests.get(url).text
-    return Fastas(list(parse(fastas)))
+    if raw:
+        return fastas
+    else:
+        return Fastas(list(parse(fastas)))

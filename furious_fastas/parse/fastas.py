@@ -8,7 +8,7 @@ def parse(fastas):
         f = f.split("\n")
         header = f[0]
         sequence = "".join(f[1:])
-        yield Fasta(header, sequence)
+        yield Fasta(sequence, header)
 
 
 def test_parse():
