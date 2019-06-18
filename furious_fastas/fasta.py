@@ -1,7 +1,7 @@
 import re
 
 uniprot_pattern = re.compile(r">(.+)\|(.+)\|(.*)")
-gnl_pattern = re.compile()
+gnl_pattern = re.compile(r">(.*)\|(.*)\|(\w+)\s(.*)")
 
 class Fasta(object):
     """Class representing one particular fasta object."""
@@ -10,41 +10,41 @@ class Fasta(object):
         self.header = header
 
     def __repr__(self):
-        return "Fasta({})".format(self.header)
+        return "{}({})".format(self.__class__.__name__, self.header)
 
     def __str__(self):
         return self.sequence
 
     def reverse(self):
-        #TODO: modify the header
         new_header = self.header
-        return Fasta(new_header, self.sequence[::-1])
+        return self.__class__(self.sequence[::-1], new_header)
 
     def copy(self):
-        return Fasta(self.header, self.sequence)
+        return self.__class__(self.sequence, self.header)
+
+    def __hash__(self):
+        return hash((self.sequence, self.header))
 
 
 class UniprotFasta(Fasta):
     """Fasta with a uniprot header."""
-    def __init__(self, sequence, header=''):
-        if not header:
-            header, sequence = re.match(header_pattern, header)
-        super().__init__(sequence, header)
-
     def to_gnl(self):
         """Reformat the uniprot header to general ncbi format."""
         db, prot, desc = self.header.split('|')
         new_header = ">gnl|db|{} {}".format(prot, desc)
-        return NCBIgeneralFasta(new_header, self.sequence)
+        return NCBIgeneralFasta(self.sequence, new_header)
 
     def to_ncbi_general(self):
         """Reformat the uniprot header to general ncbi format."""
         return self.to_gnl()
 
 
+
+
 class NCBIgeneralFasta(Fasta):
     """Fasta with a ncbi general header (according to PLGS)."""
-
     def to_uniprot(self):
         """Reformat the NCBI general header to uniprot format."""
-        
+        tag, db, pdbno, desc = re.match(gnl_pattern, self.header)
+        new_header = ">sp|{}|{}".format(pdbno, desc)
+        return UniprotFasta(new_header, self.sequence)

@@ -3,22 +3,12 @@ from itertools import chain
 from os.path import join as pjoin
 
 from .uniprot import uniprot_url
-from .parse.fastas import parse
-
+from .parse.fastas import parse_uniprot_fastas
+from .fasta import UniprotFasta
 
 class Fastas(object):
-    def __init__(self, fastas=[]):
-        self.fastas = list(fastas)
-
-    def read(self, path):
-        """Read the fastas from a file.
-
-        Args:
-            path (str): path to the file.
-        """
-        with open(path, 'r') as f:
-            fastas = f.read()
-        self.fastas = list(parse(fastas))
+    def __init__(self):
+        self.fastas = []
 
     def write(self, path, append=False):
         """Write file under the given path.
@@ -31,7 +21,7 @@ class Fastas(object):
         fp = 'a' if append else 'w+'
         with open(path, fp) as h:
             for f in self.fastas:
-                h.write("{}\n{}\n".format(f.header, str(f)))
+                h.write("{}\n{}\n".format(f.header, f.sequence))
 
     def __iter__(self):
         """Iterate over sequences."""
@@ -47,7 +37,7 @@ class Fastas(object):
         return self.fastas[key]
 
     def __repr__(self):
-        return "Fastas({})".format(len(self))
+        return "{}({})".format(self.__class__.__name__, len(self))
 
     def reverse(self):
         """Produce new Fastas containing reversed copy of sequences."""
@@ -57,15 +47,17 @@ class Fastas(object):
         return rev_self
 
     def copy(self):
-        r = Fastas()
+        r = self.__class__()
         for f in self:
             r.fastas.append(f.copy())
         return r
 
     def append(self, other):
         """Append copies of fastas."""
-        for f in other:
-            self.fastas.append(f.copy())
+        assert issubclass(other.__class__, self.__class__), "Can only add the same type of fastas."
+        if self != other:
+            for f in other:
+                self.fastas.append(f.copy())
 
     def __add__(self, other):
         """Add two fastas.
@@ -73,6 +65,43 @@ class Fastas(object):
         Args:
             other (Fastas): The other fastas, e.g. contaminants.
         """
+        assert issubclass(other.__class__, self.__class__), "Can only add the same type of fastas."
         res = self.copy()
         res.append(other)
         return res
+
+
+class UniprotFastas(Fastas):
+    def read(self, path):
+        """Read the fastas from a file.
+
+        Args:
+            path (str): path to the file.
+        """
+        with open(path, 'r') as f:
+            raw = f.read()
+        self.fastas.extend(parse_uniprot_fastas(raw))
+
+    def parse_raw(self, raw):
+        self.fastas.extend(parse_uniprot_fastas(raw))
+
+    def to_ncbi_general(self):
+        other = NCBIgeneralFastas()
+        for f in self.fastas:
+            other.fastas.append(f.to_gnl())
+        return other
+
+
+class NCBIgeneralFastas(Fastas):
+    def read(self, path):
+        """Read the fastas from a file.
+
+        Args:
+            path (str): path to the file.
+        """
+        with open(path, 'r') as f:
+            raw = f.read()
+        self.fastas.extend(parse_uniprot_fastas(raw))
+
+    def parse_raw(self, raw):
+        self.fastas.extend(parse_uniprot_fastas(raw))

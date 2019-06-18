@@ -1,15 +1,26 @@
-from ..fasta import Fasta
+from functools import partial
+import re
 
-def parse(fastas):
-    """Parse a big string with fastas."""
-    ff = fastas.split(">")[1:]
-    ff = [">"+i for i in ff]
-    for f in ff:
-        f = f.split("\n")
-        header = f[0]
-        sequence = "".join(f[1:])
-        yield Fasta(sequence, header)
+from ..fasta import UniprotFasta, NCBIgeneralFasta
 
+
+
+def parse_fastas(raw_fastas, pattern, FASTA):
+    for f in re.finditer(pattern, raw_fastas):
+        sequence = "".join(f[0].split('\n')[1:])
+        header = f[1]
+        yield FASTA(sequence, header)
+
+
+uniprot_fastas_pattern = re.compile(r"(>.+\|.+\|.*)\n(\w+\n)+")
+parse_uniprot_fastas = partial(	parse_fastas,
+								pattern=uniprot_fastas_pattern,
+					     	   	FASTA=UniprotFasta )
+
+ncbi_general_fastas_pattern = re.compile(r"(>.*\|.*\|\w+\s.*)\n(\w+\n)+")
+parse_ncbi_general_fastas = partial( parse_fastas,
+    pattern=ncbi_general_fastas_pattern,
+    FASTA=NCBIgeneralFasta)
 
 def test_parse():
     fasta = ">sp|P61513|RL37A_HUMAN 60S ribosomal protein L37a OS=Homo sapiens OX=9606 GN=RPL37A PE=1 SV=2\nMAKRTKKVGIVGKYGTRYGASLRKMVKKIEISQHAKYTCSFCGKTKMKRRAVGIWHCGSC\nMKTVAGGAWTYNTTSAVTVKSAIRRLKELKDQ\n>sp|P61513|RL37A_HUMAN 60S ribosomal protein L37a OS=Homo sapiens OX=9606 GN=RPL37A PE=1 SV=2\nMAKRTKKVGIVGKYGTRYGASLRKMVKKIEISQHAKYTCSFCGKTKMKRRAVGIWHCGSC\nMKTVAGGAWTYNTTSAVTVKSAIRRLKELKDQ\n"
