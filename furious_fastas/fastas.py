@@ -3,7 +3,7 @@ from itertools import chain
 from os.path import join as pjoin
 
 from .uniprot import uniprot_url
-from .parse.fastas import parse_uniprot_fastas
+from .parse.fastas import parse_uniprot_fastas, parse_ncbi_general_fastas
 from .fasta import UniprotFasta
 
 class Fastas(object):
@@ -101,7 +101,11 @@ class NCBIgeneralFastas(Fastas):
         """
         with open(path, 'r') as f:
             raw = f.read()
-        self.fastas.extend(parse_uniprot_fastas(raw))
+        self.fastas.extend(parse_ncbi_general_fastas(raw))
 
     def parse_raw(self, raw):
-        self.fastas.extend(parse_uniprot_fastas(raw))
+        self.fastas.extend(parse_ncbi_general_fastas(raw))
+
+    def add_reversed_fastas_for_plgs(self):
+        for i in range(len(self.fastas)):
+            self.fastas.append(self.fastas[i].reverse_for_plgs(i+1))

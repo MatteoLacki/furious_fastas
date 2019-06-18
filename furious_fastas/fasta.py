@@ -48,3 +48,7 @@ class NCBIgeneralFasta(Fasta):
         tag, db, pdbno, desc = re.match(gnl_pattern, self.header)
         new_header = ">sp|{}|{}".format(pdbno, desc)
         return UniprotFasta(new_header, self.sequence)
+
+    def reverse_for_plgs(self, i):
+        h = ">REVERSE{} Reversed Sequence {}".format(i,i)
+        return self.__class__(self.sequence[::-1], h)
