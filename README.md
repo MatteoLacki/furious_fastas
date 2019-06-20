@@ -16,7 +16,7 @@ Finally, you would merge the two files as simple as
 ```console
 cat human.fasta contaminants.fasta > ready.fasta
 ```
-and would feed `ready.fasta` into the software.
+and would feed `ready.fasta` into the software (on Windows you might use `type` instead of `cat`).
 
 However, some software that from a company that I wouldn't like to mention (let me clear my throat with some waters first), require for their scripts to have the files to include reversed sequences.
 This can be done easily in Python, as we do it here.

@@ -22,7 +22,7 @@ setup(
         'Topic :: Scientific/Engineering :: Chemistry',
         'Programming Language :: Python :: 3.6'],
     install_requires=[
-        'requests'
+        'requests' # this severs as wget for Python
     ],
     # include_package_data=True,
     # package_data={

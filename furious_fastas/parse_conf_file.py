@@ -4,7 +4,7 @@ the queries that make part of the URL of the search in the UNIPROT.
 """
 
 
-def parse(path, prepend="http://www.uniprot.org/uniprot/?query="):
+def parse_conf(path, prepend="http://www.uniprot.org/uniprot/?query="):
     """Parse the input file.
 
     Arguments:

@@ -5,27 +5,22 @@ from shutil import move as mv
 import json
 
 from ..download import download
-from ..contaminants import conts
+from ..contaminants import uniprot_contaminants as conts
 # from .misc import create_xml_description
 
 
-def update_plgs(db_path,
-                species2url,
-                contaminants=conts,
-                indent=4,
-                verbose=True):
+def update_plgs_fasta_db(db_path,
+                         species2url,
+                         contaminants=conts,
+                         indent=4,
+                         verbose=True):
     """Update the fasta data bases for the PLGS software.
 
-    Arguments
-    =========
-    db_path : str
-        Path to the folder where we will store the files.
-    species2url : iterable of tuples
-        Each tuple consists of the species name and its Uniprot url.
-    contaminants :
-        Fastas with contaminants.
-    verbose : boolean
-        Be more verbose?
+    Args:
+        db_path (str): Path to the folder where we will store the files.
+        species2url (iterable of tuples): Each tuple consists of the species name and its Uniprot url.
+        contaminants (Fastas): Fastas with contaminants.
+        verbose (boolean): Be verbose.
     """
     if verbose:
         print("Creating necessary folders.")

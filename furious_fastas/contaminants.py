@@ -996,4 +996,4 @@ VQQ
 """
 
 uniprot_contaminants = UniprotFastas()
-uniprot_contaminants.add_raw(raw_uniprot_contaminants)
+uniprot_contaminants.parse_raw(raw_uniprot_contaminants)

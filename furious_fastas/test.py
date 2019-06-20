@@ -7,51 +7,42 @@
 from furious_fastas.parse import parse_uniprot_fastas
 from furious_fastas import UniprotFastas, NCBIgeneralFastas
 
+from pathlib import Path
+
+pp = Path("/Users/matteo/Projects/furious_fastas/")
 
 human = UniprotFastas()
-human.read("/Users/matteo/Projects/furious_fastas/data/human_raw.fasta")
+human.read(pp/"data/human_raw.fasta")
 contaminants = UniprotFastas()
-contaminants.read("/Users/matteo/Projects/furious_fastas/data/contaminants.fasta")
+contaminants.read(pp/"data/contaminants.fasta")
 str(contaminants[171])
 
 human.append(contaminants)
 human_gnl = human.to_ncbi_general()
 human_gnl.add_reversed_fastas_for_plgs()
-human_gnl.write('/Users/matteo/Projects/furious_fastas/data/human_gnl_reversed.fas')
+human_gnl.write(pp/'data/human_gnl_reversed.fas')
 
-from furious_fastas.update.peaks import update_peaks
-from furious_fastas.update.plgs import update_plgs
-from furious_fastas.contaminants import conts
-from furious_fastas.download import download
-from furious_fastas.fasta import Fasta, UniprotFasta, NCBIgeneralFasta
-from furious_fastas.fastas import Fastas, UniprotFastas
+from furious_fastas.parse_conf_file import parse_conf
+
+# species to url
+s2u = list(parse_conf(pp/"tests/test_conf.txt"))
+
+from furious_fastas.update.peaks import update_peaks_fasta_db
+from furious_fastas.update.plgs import update_plgs_fasta_db
 
 
-from collections import Counter
-
-# s2u = list(parse("/home/matteo/Projects/furious_fastas/4peaks/s2u2"))
-# update_plgs("/home/matteo/Projects/furious_fastas/4peaks/db2", s2u)
-# db_path = "/home/matteo/Projects/furious_fastas/4peaks/db2"
-# species2url = s2u
+conts = [('contaminants', 'https://raw.githubusercontent.com/MatteoLacki/protein_contaminants/master/contaminants.fasta')]
+db_path = pp/"tests/peaks/db"
+update_peaks_fasta_db(db_path, conts)
 
 
 
 
-human = UniprotFastas(human_raw)
+update_plgs("/home/matteo/Projects/furious_fastas/4peaks/db2", s2u)
+db_path = "/home/matteo/Projects/furious_fastas/4peaks/db2"
+species2url = s2u
 
 
-
-with open("/home/matteo/Projects/furious_fastas/data/human_raw.fasta", 'w') as f:
-	for r in human_raw:
-		f.write(r)
-
-import re
-
-header = ">sp|P14060|3BHS1_HUMAN 3 beta-hydroxysteroid dehydrogenase/Delta 5-->4-isomerase"
-header = ">sp|P14060|3BHS1_HUMAN 3 beta-hydroxysteroid dehydrogenase/Delta 5-->4-isomerase type 1 OS=Homo sapiens OX=9606 GN=HSD3B1 PE=1 SV=2"
-
-%load_ext autoreload
-%autoreload 2
 
 from furious_fastas.contaminants import uniprot_contaminants
 from furious_fastas.fastas import UniprotFastas, NCBIgeneralFastas
