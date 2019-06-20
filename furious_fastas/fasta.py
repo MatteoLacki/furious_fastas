@@ -39,8 +39,6 @@ class UniprotFasta(Fasta):
         return self.to_gnl()
 
 
-
-
 class NCBIgeneralFasta(Fasta):
     """Fasta with a ncbi general header (according to PLGS)."""
     def to_uniprot(self):

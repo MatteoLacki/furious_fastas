@@ -1,7 +1,10 @@
 from os.path import join
 
+
 def create_xml_description(path, file="251.xml", verbose=False):
-    """Create this peculiar xml file used by Protein Global Server.
+    """Create a peculiar xml file used by Protein Global Server for no known reason.
+
+    Developpers of PLGS are asked to provide explanations on all their misdeeds.
 
     Arguments
     =========

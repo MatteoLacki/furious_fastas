@@ -3,12 +3,15 @@ from itertools import chain
 from os.path import join as pjoin
 
 from .uniprot import uniprot_url
-from .parse.fastas import parse_uniprot_fastas, parse_ncbi_general_fastas
+from .parse import parse_uniprot_fastas, parse_ncbi_general_fastas
 from .fasta import UniprotFasta
 
 class Fastas(object):
     def __init__(self):
         self.fastas = []
+
+    def read(self, path):
+        pass
 
     def write(self, path, append=False):
         """Write file under the given path.

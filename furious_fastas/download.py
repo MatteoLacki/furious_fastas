@@ -4,6 +4,8 @@ import requests
 def download(url):
     """Download the query/species sequences from Uniprot.
 
+	This is an equivalent of 'wget url', but inside python.
+
     Arguments
     =========
     url : str

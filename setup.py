@@ -24,10 +24,10 @@ setup(
     install_requires=[
         'requests'
     ],
-    include_package_data=True,
+    # include_package_data=True,
     # package_data={
     #     'data':
-    #          ['data/contaminants.fasta']
+    #          ['data/contaminants_uniprot_format.fasta']
     # },
     scripts = [
         "bin/update_fastas"
