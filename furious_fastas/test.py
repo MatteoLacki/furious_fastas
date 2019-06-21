@@ -19,12 +19,11 @@ print(rep_seq_prots,
 
 contaminants = UniprotFastas()
 contaminants.read(pp/"data/contaminants.fasta")
-str(contaminants[171])
 
 human.append(contaminants)
-human_gnl = human.to_ncbi_general()
-human_gnl.add_reversed_fastas_for_plgs()
-human_gnl.write(pp/'data/human_gnl_reversed.fas')
+human = human.to_ncbi_general()
+human.add_reversed_fastas_for_plgs()
+human.write(pp/'data/human_gnl_reversed.fas')
 
 from furious_fastas.parse_conf_file import parse_conf
 
@@ -32,19 +31,20 @@ from furious_fastas.parse_conf_file import parse_conf
 s2u = list(parse_conf(pp/"tests/test_conf.txt"))
 
 from furious_fastas.update.peaks import update_peaks_fasta_db
+
+# conts = [('contaminants', 'https://raw.githubusercontent.com/MatteoLacki/protein_contaminants/master/contaminants.fasta')]
+# db_path = pp/"tests/peaks/db"
+# update_peaks_fasta_db(db_path, conts)
+
+from pathlib import Path
 from furious_fastas.update.plgs import update_plgs_fasta_db
 
+pp = Path("/Users/matteo/Projects/furious_fastas/")
+conts = [('test1', 'https://raw.githubusercontent.com/MatteoLacki/protein_contaminants/master/contaminants.fasta'),
+		 ('test2', 'https://raw.githubusercontent.com/MatteoLacki/protein_contaminants/master/contaminants.fasta')]
+db_path = pp/"tests/plgs/db"
+update_plgs_fasta_db(db_path, conts)
 
-conts = [('contaminants', 'https://raw.githubusercontent.com/MatteoLacki/protein_contaminants/master/contaminants.fasta')]
-db_path = pp/"tests/peaks/db"
-update_peaks_fasta_db(db_path, conts)
-
-
-
-
-update_plgs("/home/matteo/Projects/furious_fastas/4peaks/db2", s2u)
-db_path = "/home/matteo/Projects/furious_fastas/4peaks/db2"
-species2url = s2u
 
 
 
