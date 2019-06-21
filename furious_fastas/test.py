@@ -13,34 +13,9 @@ pp = Path("/Users/matteo/Projects/furious_fastas/")
 
 human = UniprotFastas()
 human.read(pp/"data/human_raw.fasta")
-
-# check for the same sequences
-from collections import Counter, defaultdict
-
-rep_seq_prots = defaultdict(list)
-prot_seqs = {}
-for f in human:
-	seq = str(f)
-	if seq in prot_seqs:
-		if not seq in rep_seq_prots:# need to add previous f
-			rep_seq_prots[seq].append(prot_seqs[seq])
-		rep_seq_prots[seq].append(f)
-	else:
-		prot_seqs[seq] = f
-
-# there are 48 repetitions!!!
-len(rep_seq_prots)
-
-# how to deal with these???
-from pprint import pprint
-
+rep_seq_prots = human.find_repeating_sequences()
 print(rep_seq_prots,
-      file=open(pp/"tests/multiple_proteins_same_sequence.txt", "a"))
-
-
-
-
-
+      file = open(pp/"tests/multiple_proteins_same_sequence.txt", "a"))
 
 contaminants = UniprotFastas()
 contaminants.read(pp/"data/contaminants.fasta")

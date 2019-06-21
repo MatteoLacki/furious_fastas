@@ -1,10 +1,8 @@
-import io
-from itertools import chain
-from os.path import join as pjoin
+"""Classes representing collections of fastas."""
+from collections import defaultdict
 
-from .uniprot import uniprot_url
 from .parse import parse_uniprot_fastas, parse_ncbi_general_fastas
-from .fasta import UniprotFasta
+
 
 class Fastas(object):
     def __init__(self):
@@ -72,6 +70,25 @@ class Fastas(object):
         res = self.copy()
         res.append(other)
         return res
+
+    def find_repeating_sequences(self):
+        """Find all the fastas with the same sequences.
+
+        Returns:
+            dict: maps a sequence to a lists of fastas with that sequence.
+        """
+        rep_seq_prots = defaultdict(list)
+        prot_seqs = {}
+        for f in self:
+            seq = str(f)
+            if seq in prot_seqs:
+                if not seq in rep_seq_prots:# need to add previous f
+                    rep_seq_prots[seq].append(prot_seqs[seq])
+                rep_seq_prots[seq].append(f)
+            else:
+                prot_seqs[seq] = f
+        return dict(rep_seq_prots)
+
 
 
 class UniprotFastas(Fastas):
