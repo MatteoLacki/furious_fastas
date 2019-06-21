@@ -5,7 +5,7 @@ There ain't much to do with fastas but to download them and use.
 For this you could open the terminal (or powershell on windows) and type
 
 ```console
-wget -P human.fasta "http://www.uniprot.org/uniprot/?query=reviewed:yes+AND+organism:9606&format=fasta"
+wget -O human.fasta "http://www.uniprot.org/uniprot/?query=reviewed:yes+AND+organism:9606&format=fasta"
 ```
 to download human database.
 Then, to get contaminants used in our group, you could simply type
