@@ -31,7 +31,7 @@ from furious_fastas.parse_conf_file import parse_conf
 s2u = list(parse_conf(pp/"tests/test_conf.txt"))
 
 from furious_fastas.update.peaks import update_peaks_fasta_db
-
+from furious_fastas.update.plgs import update_plgs_fasta_db
 # conts = [('contaminants', 'https://raw.githubusercontent.com/MatteoLacki/protein_contaminants/master/contaminants.fasta')]
 # db_path = pp/"tests/peaks/db"
 # update_peaks_fasta_db(db_path, conts)

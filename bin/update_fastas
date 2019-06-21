@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 import argparse
 
-from furious_fastas.parse.species2uniprot import parse
-from furious_fastas.update.plgs import update_plgs
-from furious_fastas.update.peaks import update_peaks
+from furious_fastas.parse_conf_file import parse_conf
+from furious_fastas.update.peaks import update_peaks_fasta_db
+from furious_fastas.update.plgs import update_plgs_fasta_db
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -19,4 +19,4 @@ if __name__ == "__main__":
     update = {'plgs': update_plgs,
               'peaks': update_peaks}[a.db_format]
     update(db_path=a.db_path,
-           species2url=parse(a.species2url_path))
+           species2url=parse_conf(a.species2url_path))
