@@ -4,6 +4,14 @@
 # path2human = "/home/matteo/Projects/furious_fastas/4peaks/human.fasta"
 # path2human = "/Users/matteo/Projects/furious_fastas/test/human.fasta"
 
+from furious_fastas.download import download
+from furious_fastas.uniprot import uniprot_url
+
+human_raw = download(uniprot_url['human'])
+with open('/home/matteo/Projects/furious_fastas/data/tests/human_raw.fasta', 'w') as f:
+	f.write(human_raw)
+
+
 from furious_fastas.parse import parse_uniprot_fastas
 from furious_fastas import UniprotFastas, NCBIgeneralFastas
 

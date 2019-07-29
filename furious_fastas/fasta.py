@@ -3,6 +3,8 @@ import re
 uniprot_pattern = re.compile(r">(.+)\|(.+)\|(.*)")
 gnl_pattern = re.compile(r">(.*)\|(.*)\|(\w+)\s(.*)")
 
+
+#TODO: one object with a parsed header and few methods for representing it, rather than subclassing the whole thing!!!!
 class Fasta(object):
     """Class representing one particular fasta object."""
     def __init__(self, sequence, header):
