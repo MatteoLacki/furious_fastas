@@ -1,14 +1,24 @@
-from furious_fastas.download import download
-from furious_fastas.uniprot import uniprot_url
-from furious_fastas.parse import parse_uniprot_fastas
-from furious_fastas.fastas import UniprotFastas
+%load_ext autoreload
+%autoreload 2
 
-human_raw = download(uniprot_url['human'])
+from furious_fastas.fastas import Fastas
+from furious_fastas.fasta import Fasta
+from collections import Counter
+from furious_fastas.contaminants import contaminants
 
-x = list(parse_uniprot_fastas(human_raw))
-ten_prots = x[0:10]
+# human_raw = download(uniprot_url['human'])
+human = Fastas()
+path = r'/Users/matteo/Projects/furious_fastas/data/human_raw.fasta'
+human.read(path)
+human.repeat_stats()
 
-unif = UniprotFastas()
-unif.fastas = ten_prots
+human.write(r'/Users/matteo/Projects/furious_fastas/data/matteo_test.fasta')
+human[0]
+human[10]
 
-unif.write('/home/matteo/Projects/furious_fastas/data/tests/human10.fasta')
+contaminated_human = human + contaminants
+contaminated_human.repeat_stats()
+contaminants.repeat_stats()
+
+
+human[0]

@@ -1,6 +1,6 @@
-from .fastas import UniprotFastas
+from .fastas import Fastas
 
-raw_uniprot_contaminants = """>sp|P00489|PYGM_RABIT_CONTA Contaminant, Glycogen phosphorylase, muscle form (Myophosphorylase)
+raw_contaminants = r""">sp|P00489|PYGM_RABIT_CONTA Contaminant, Glycogen phosphorylase, muscle form (Myophosphorylase)
 MSRPLSDQEKRKQISVRGLAGVENVTELKKNFNRHLHFTLVKDRNVATPRDYYFALAHTVRDHLVGRWIR
 TQQHYYEKDPKRIYYLSLEFYMGRTLQNTMVNLALENACDEATYQLGLDMEELEEIEEDAGLGNGGLGRL
 AACFLDSMATLGLAAYGYGIRYEFGIFNQKICGGWQMEEADDWLRYGNPWEKARPEFTLPVHFYGRVEHT
@@ -995,5 +995,5 @@ VGGAEARINTQWLLTSGTTEANAWKSTLVGHDTFTKVKPSAASIDAAKKAGVNNGNPLDA
 VQQ
 """
 
-uniprot_contaminants = UniprotFastas()
-uniprot_contaminants.parse_raw(raw_uniprot_contaminants)
+contaminants = Fastas()
+contaminants.parse(raw_contaminants)

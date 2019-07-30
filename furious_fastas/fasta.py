@@ -40,6 +40,10 @@ class UniprotFasta(Fasta):
         """Reformat the uniprot header to general ncbi format."""
         return self.to_gnl()
 
+    def reverse_for_plgs(self, i):
+        h = ">REVERSE{} Reversed Sequence {}".format(i,i)
+        return self.__class__(self.sequence[::-1], h)
+
 
 class NCBIgeneralFasta(Fasta):
     """Fasta with a ncbi general header (according to PLGS)."""
@@ -50,5 +54,5 @@ class NCBIgeneralFasta(Fasta):
         return UniprotFasta(new_header, self.sequence)
 
     def reverse_for_plgs(self, i):
-        h = ">REVERSE{} Reversed Sequence {}".format(i,i)
+        h = ">gnl|db|REVERSE{} REVERSE{} Reversed Sequence {}".format(i,i)
         return self.__class__(self.sequence[::-1], h)
