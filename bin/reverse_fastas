@@ -15,13 +15,14 @@ if __name__ == "__main__":
                         default=False,
                         help="Append Tenzer's contaminants.")
     a = parser.parse_args()
-    fastas = fastas(a.fasta_file)
+    fasta_file = Path(a.fasta_file).expanduser()
+    fastas = fastas(fasta_file)
     if a.contaminants:
     	fastas.extend(contaminants)
     	out_name = fasta_file.stem+'_reversed_contaminated'+fasta_file.suffix
     else:
     	out_name = fasta_file.stem+'_reversed'+fasta_file.suffix
-    fastas = fastas.to_ncbi_general()
-    fastas_general = Fastas(f.to_ncbi_general() for f in human)
+    fastas_general = Fastas(f.to_ncbi_general() for f in fastas)
+    fastas_general.reverse()
     fastas_general.write(fasta_file.parent/out_name)
     print('Success!')
