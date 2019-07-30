@@ -39,6 +39,10 @@ class ParsedFasta(Fasta):
     def __repr__(self):
         return "{}({}|{}|{})".format(self.__class__.__name__, self.accession, self.entry, self.description)
 
+    @property
+    def header(self):
+        raise NotImplementedError("Header must be a valid fiel/accessor of any subclass of the ParsedFasta.")
+
 
 class SwissProtFasta(ParsedFasta):
     def reverse(self, i=''):
@@ -48,6 +52,7 @@ class SwissProtFasta(ParsedFasta):
     def header(self):
         return ">sp|{}|{} {}".format(self.accession, self.entry, self.description)
 
+
 class TRemblFasta(ParsedFasta):
     def reverse(self, i=''):
         return Fasta('>REVERSE{} Reversed Sequence {}'.format(str(i), str(i)), self.sequence[::-1])
@@ -55,6 +60,7 @@ class TRemblFasta(ParsedFasta):
     @property
     def header(self):
         return ">tr|{}|{} {}".format(self.accession, self.entry, self.description)
+
 
 class NCBIgeneralFasta(ParsedFasta):
     def reverse(self, i=''):
