@@ -45,7 +45,7 @@ class Fastas(list):
 
     def reverse(self):
         """Extend fastas by adding reversed sequences."""
-        self.extend([f.reverse() for f in self])
+        self.extend([f.reverse(i+1) for i,f in enumerate(self)])
 
     def __add__(self, other):
         """Sum fastas."""
@@ -59,3 +59,6 @@ class Fastas(list):
 
     def fasta_types(self):
         return dict(Counter(f.__class__.__name__ for f in self))
+
+    def any_reversed(self):
+        return any("REVERSE" in f.header for f in self)
