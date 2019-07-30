@@ -1,2 +1,2 @@
-from .fastas import UniprotFastas, NCBIgeneralFastas
-from .download import download
+# from .fastas import UniprotFastas, NCBIgeneralFastas
+# from .download import download

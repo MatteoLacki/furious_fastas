@@ -1,13 +1,6 @@
-import re
-
-uniprot_pattern = re.compile(r">(.+)\|(.+)\|(.*)")
-gnl_pattern = re.compile(r">(.*)\|(.*)\|(\w+)\s(.*)")
-
-
-#TODO: one object with a parsed header and few methods for representing it, rather than subclassing the whole thing!!!!
 class Fasta(object):
     """Class representing one particular fasta object."""
-    def __init__(self, sequence, header):
+    def __init__(self, header, sequence):
         self.sequence = sequence
         self.header = header
 
@@ -18,41 +11,95 @@ class Fasta(object):
         return self.sequence
 
     def reverse(self):
-        new_header = self.header
-        return self.__class__(self.sequence[::-1], new_header)
+        return self.__class__(self.header+" REVERSED", self.sequence[::-1])
 
     def copy(self):
-        return self.__class__(self.sequence, self.header)
+        return self.__class__(self.header, self.sequence)
 
     def __hash__(self):
         return hash((self.sequence, self.header))
 
 
-class UniprotFasta(Fasta):
-    """Fasta with a uniprot header."""
-    def to_gnl(self):
-        """Reformat the uniprot header to general ncbi format."""
-        db, prot, desc = self.header.split('|')
-        new_header = ">gnl|db|{} {}".format(prot, desc)
-        return NCBIgeneralFasta(self.sequence, new_header)
+class ParsedFasta(Fasta):
+    def __init__(self, accession, entry, description, sequence):
+        self.accession = accession
+        self.entry = entry
+        self.description = description
+        self.sequence = sequence
+
+    def to_swissprot(self):
+        return SwissProtFasta(self.accession, self.entry, self.description, self.sequence)
+
+    def to_trembl(self):
+        return TRemblFasta(self.accession, self.entry, self.description, self.sequence)
 
     def to_ncbi_general(self):
-        """Reformat the uniprot header to general ncbi format."""
-        return self.to_gnl()
+        return NCBIgeneralFasta(self.accession, self.entry, self.description, self.sequence)
 
-    def reverse_for_plgs(self, i):
-        h = ">REVERSE{} Reversed Sequence {}".format(i,i)
-        return self.__class__(self.sequence[::-1], h)
+    def __repr__(self):
+        return "{}({}|{}|{})".format(self.__class__.__name__, self.accession, self.entry, self.description)
 
 
-class NCBIgeneralFasta(Fasta):
-    """Fasta with a ncbi general header (according to PLGS)."""
-    def to_uniprot(self):
-        """Reformat the NCBI general header to uniprot format."""
-        tag, db, pdbno, desc = re.match(gnl_pattern, self.header)
-        new_header = ">sp|{}|{}".format(pdbno, desc)
-        return UniprotFasta(new_header, self.sequence)
+class SwissProtFasta(ParsedFasta):
+    def reverse(self, i=''):
+        return Fasta('>REVERSE{} Reversed Sequence {}'.format(str(i), str(i)), self.sequence[::-1])
 
-    def reverse_for_plgs(self, i):
-        h = ">gnl|db|REVERSE{} REVERSE{} Reversed Sequence {}".format(i,i)
-        return self.__class__(self.sequence[::-1], h)
+    @property
+    def header(self):
+        return ">sp|{}|{} {}".format(self.accession, self.entry, self.description)
+
+class TRemblFasta(ParsedFasta):
+    def reverse(self, i=''):
+        return Fasta('>REVERSE{} Reversed Sequence {}'.format(str(i), str(i)), self.sequence[::-1])
+
+    @property
+    def header(self):
+        return ">tr|{}|{} {}".format(self.accession, self.entry, self.description)
+
+class NCBIgeneralFasta(ParsedFasta):
+    def reverse(self, i=''):
+        return Fasta('>gnl|db|REVERSE{} REVERSE{} Reversed Sequence {}'.format(str(i), str(i), str(i)), self.sequence[::-1])        
+    @property
+    def header(self):
+        return ">gnl|db|{} {} {}".format(self.accession, self.entry, self.description)
+
+
+def parse_header(h):
+    if ">gnl|db|" in h:
+        h = h.replace(">gnl|db|","")
+        accession, entry = h.split(' ')[:2]
+        description = h.replace(accession +' '+ entry + ' ', '')
+        db = ">gnl|db|"
+    elif '>sp|' in h:
+        h = h.replace('>sp|','')
+        accession, h = h.split('|')
+        entry = h.split(' ')[0]
+        description = h.replace(entry+' ','')
+        db = ">sp|"
+    elif '>tr|' in h:
+        h = h.replace('>tr|','')
+        accession, h = h.split('|')
+        entry = h.split(' ')[0]
+        description = h.replace(entry+' ','')
+        db = ">tr|"
+    elif ">REVERSE" in h:
+        h = h.replace('>','')
+        accession = entry = h.split(' ')[0]
+        description = h.replace(entry+' ','')
+        db = ">sp|"
+    else:
+        raise RuntimeError("Header cannot be parsed: {}".format(h))
+    return accession, entry, description, db
+
+
+fasta_formats = {'>sp|':      SwissProtFasta,
+                 '>tr|':      TRemblFasta,
+                 '>gnl|db|':  NCBIgeneralFasta}
+
+def fasta(header, sequence):
+    try:
+        accession, entry, description, db = parse_header(header)
+        fasta_format = fasta_formats.get(db, Fasta)
+        return fasta_format(accession, entry, description, sequence)
+    except RuntimeError:
+        return Fasta(header, sequence)

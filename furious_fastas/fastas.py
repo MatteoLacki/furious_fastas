@@ -1,19 +1,23 @@
 """Classes representing collections of fastas."""
 from collections import Counter
 
-from .parse import parse_uniprot_fastas, parse_ncbi_general_fastas
-from .fasta import Fasta
+from .fasta import fasta
 
 
 class Fastas(list):
-    def read(self, path):
+    def read(self, path, **parse_args):
         """Append fastas from a file."""
         with open(path, 'r') as f:
             raw = f.read()
-        self.parse(raw) 
+        self.parse(raw, **parse_args) 
 
     def parse(self, raw):
-        """Parse a raw string containing some fasta sequences."""
+        """Parse a raw string containing some fasta sequences.
+
+        Args:
+            raw (str): a raw string with fasta file contents.
+            fasta (class): class to represent the fastas with. Either 'Fasta' or 'ParsedFasta'
+        """
         all_lines = raw.splitlines()
         headers = []
         headers_idx = []
@@ -26,7 +30,7 @@ class Fastas(list):
         prev_idx = next(headers_idx) + 1
         for next_idx, header in zip(headers_idx, headers):
             sequence = "".join(all_lines[prev_idx:next_idx])
-            self.append(Fasta(sequence, header))
+            self.append(fasta(header, sequence))
             prev_idx = next_idx + 1
 
     def write(self, path, mode='w+'):
@@ -53,38 +57,5 @@ class Fastas(list):
     def __repr__(self):
         return "{}({})".format(self.__class__.__name__, len(self))
 
-
-
-# class UniprotFastas(Fastas):
-#     def parse_raw(self, raw):
-#         """Parse a raw string.
-
-#         Arguments:
-#             raw (str): a string with fastas in.
-#         """
-#         self.fastas.extend(parse_uniprot_fastas(raw))
-
-#     def to_ncbi_general(self):
-#         other = NCBIgeneralFastas()
-#         for f in self.fastas:
-#             other.fastas.append(f.to_gnl())
-#         return other
-
-
-# class NCBIgeneralFastas(Fastas):
-#     def read(self, path):
-#         """Read the fastas from a file.
-
-#         Args:
-#             path (str): path to the file.
-#         """
-#         with open(path, 'r') as f:
-#             raw = f.read()
-#         self.parse_raw(raw)
-
-#     def parse_raw(self, raw):
-#         self.fastas.extend(parse_ncbi_general_fastas(raw))
-
-#     def add_reversed_fastas_for_plgs(self):
-#         for i in range(len(self.fastas)):
-#             self.fastas.append(self.fastas[i].reverse_for_plgs(i+1))
+    def fasta_types(self):
+        return dict(Counter(f.__class__.__name__ for f in self))
