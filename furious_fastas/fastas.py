@@ -72,3 +72,16 @@ class Fastas(list):
 
     def same_fasta_types(self):
         return len(self.fasta_types()) == 1
+
+
+def fastas(path):
+    """Read in a fasta object from a given path.
+
+    Args:
+        path (str or pathlib.Path): Path to the fasta file.
+    Returns:
+        Fastas
+    """
+    fs = Fastas()
+    fs.read(path)
+    return fs
