@@ -1,4 +1,4 @@
- class Fasta(object):
+class Fasta(object):
     """Class representing one particular fasta object."""
     def __init__(self, header, sequence):
         self.sequence = sequence

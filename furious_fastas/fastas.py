@@ -4,6 +4,10 @@ from collections import Counter
 from .fasta import fasta
 
 
+class FastasAlreadyReversedError(Exception):
+    pass
+
+
 class Fastas(list):
     def read(self, path, **parse_args):
         """Append fastas from a file."""
@@ -43,9 +47,15 @@ class Fastas(list):
         """Get the distribution of shared fasta sequences."""
         return dict(Counter(Counter(f.sequence for f in self).values()))
 
+    def any_reversed(self):
+        return any("REVERSE" in f.header for f in self)
+
     def reverse(self):
         """Extend fastas by adding reversed sequences."""
-        self.extend([f.reverse(i+1) for i,f in enumerate(self)])
+        if not self.any_reversed():
+            self.extend([f.reverse(i+1) for i,f in enumerate(self)])
+        else:
+            raise FastasAlreadyReversedError()
 
     def __add__(self, other):
         """Sum fastas."""
@@ -60,5 +70,5 @@ class Fastas(list):
     def fasta_types(self):
         return dict(Counter(f.__class__.__name__ for f in self))
 
-    def any_reversed(self):
-        return any("REVERSE" in f.header for f in self)
+    def same_fasta_types(self):
+        return len(self.fasta_types()) == 1

@@ -14,7 +14,6 @@ list(path.glob('*'))
 
 mouse = Fastas()
 mouse.read(path/'mouse.fasta')
-mouse[34324-1]
 
 mouse.fasta_types()
 f = mouse[0]
@@ -23,3 +22,12 @@ frev.sequence
 f.sequence
 
 mouse.any_reversed()
+mouse.reverse()
+len(mouse.fasta_types())
+
+len()
+
+mouse.same_fasta_types()
+
+
+Counter(Counter(f.entry for f in mouse).values())
