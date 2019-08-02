@@ -1,34 +1,20 @@
-%load_ext autoreload
-%autoreload 2
-
+from furious_fastas import fastas, Fastas
 from pathlib import Path
 
-from furious_fastas.fasta import Fasta, fasta
-from furious_fastas import Fastas, fastas, contaminants
-from collections import Counter
-
-path = Path("/home/matteo/Projects/pep2prot/pep2prot/data/")
+path = Path("/home/matteo/Projects/furious_fastas/gnl2sp4ute")
 list(path.glob('*'))
 
-mouse = fastas(path/'mouse.fasta')
+human = fastas(path/"human.fasta")
+hye = fastas(path/"HYE.fasta")
+mouse = fastas(path/"mouse.fasta")
 
-mouse.fasta_types()
-f = mouse[0]
-frev = f.reverse(0)
-frev.sequence
-f.sequence
+def filter_reverses_and_uniprotofy(F):
+    return Fastas(f.to_swissprot() for f in F if not "REVERSE" in f.header)
 
-mouse.any_reversed()
-mouse.reverse()
-len(mouse.fasta_types())
+human = filter_reverses_and_uniprotofy(human)
+hye = filter_reverses_and_uniprotofy(hye)
+mouse = filter_reverses_and_uniprotofy(mouse)
 
-len()
-
-mouse.same_fasta_types()
-Counter(Counter(f.entry for f in mouse).values())
-
-human_path = Path('~/Projects/furious_fastas/data/human_raw.fasta').expanduser()
-human = fastas(human_path)
-human.fasta_types()
-human_general = Fastas(f.to_ncbi_general() for f in human)
-human_general.fasta_types()
+human.write(path/"human_sp.fasta")
+hye.write(path/"hye_sp.fasta")
+mouse.write(path/"mouse_sp.fasta")
