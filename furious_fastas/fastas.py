@@ -2,7 +2,7 @@
 from collections import Counter
 
 from .fasta import fasta
-
+from .download import download
 
 class FastasAlreadyReversedError(Exception):
     pass
@@ -74,14 +74,17 @@ class Fastas(list):
         return len(self.fasta_types()) == 1
 
 
-def fastas(path):
+def fastas(path_url):
     """Read in a fasta object from a given path.
 
     Args:
-        path (str or pathlib.Path): Path to the fasta file.
+        path_url (str or pathlib.Path): Path to the fasta file or a valid url to where the fastas can be found.
     Returns:
         Fastas
     """
     fs = Fastas()
-    fs.read(path)
+    try:
+        fs.read(path_url)
+    except FileNotFoundError:
+        fs.parse(download(path_url))
     return fs
