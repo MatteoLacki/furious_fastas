@@ -15,6 +15,4 @@ human = filter_reverses_and_uniprotofy(human)
 hye = filter_reverses_and_uniprotofy(hye)
 mouse = filter_reverses_and_uniprotofy(mouse)
 
-human.write(path/"human_sp.fasta")
-hye.write(path/"hye_sp.fasta")
-mouse.write(path/"mouse_sp.fasta")
+
