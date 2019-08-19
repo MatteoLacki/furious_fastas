@@ -2,9 +2,9 @@ from pathlib import Path
 from shutil import move as mv
 from datetime import datetime
 
-from furious_fastas.time_ops import datestr2date, now
-from furious_fastas.fastas import fastas, Fastas
-from furious_fastas.contaminants import contaminants
+from .time_ops import datestr2date, now
+from .fastas import fastas, Fastas
+from .contaminants import contaminants
 
 
 def update_plgs_peaks_fastas(db_path, species2url, verbose=True):
@@ -17,7 +17,9 @@ def update_plgs_peaks_fastas(db_path, species2url, verbose=True):
         verbose (boolean): Be verbose.
     
     """
-    db_path = Path(db_path)
+    if db_path == '.':
+        db_path = Path.cwd()
+    db_path = Path(db_path).expanduser()
     latest = db_path/'latest'
     previous = db_path/'previous'
     if latest.exists():
@@ -34,8 +36,8 @@ def update_plgs_peaks_fastas(db_path, species2url, verbose=True):
         if verbose:
             print("\tUpdating {}.".format(name))
         fs = fastas(url)
+        file = "{}_{}_conts_{}_{}.fasta".format(name, str(len(fs)), str(len(contaminants)), NOW)
         fs.extend(contaminants)
-        file = "{}_{}_{}.fasta".format(name, str(len(fs)), NOW)
         fs.write(latest_NOW_PEAKS/file)
         fs = Fastas(f.to_ncbi_general() for f in fs)
         fs.reverse()
