@@ -14,44 +14,49 @@ def iter_chunks(x, chunk_size=80):
         x (str or list): or something that supports get operation.
         chunk_size (int): size of chunks."""
     k = len(x) // chunk_size
-    i = 0
-    for i in range(k):
+    for i in range(k+1):
         yield x[i*chunk_size:(i+1)*chunk_size]
-    yield x[(i+1)*chunk_size:]
 
+
+def raw2fastas(raw):
+    """Parse raw string into fastas.
+
+    Args:
+        raw (iterable): lines of raw fasta.
+    Yield:
+        fasta objects.
+    """
+    sequence = []
+    for l in raw:
+        l = l.replace('\n','')
+        if l:
+            if l[0] == '>':
+                if sequence:
+                    yield fasta(header, "".join(sequence))
+                    sequence = []
+                header = l
+            else:
+                sequence.append(l)
+    if sequence:
+        yield fasta(header, "".join(sequence))
 
 class FastasAlreadyReversedError(Exception):
     pass
 
 
 class Fastas(list):
-    def read(self, path, **parse_args):
+    def read(self, path):
         """Append fastas from a file."""
         with open(path, 'r') as f:
-            raw = f.read()
-        self.parse(raw, **parse_args) 
+            self.extend(raw2fastas(f))
 
     def parse(self, raw):
         """Parse a raw string containing some fasta sequences.
 
         Args:
             raw (str): a raw string with fasta file contents.
-            fasta (class): class to represent the fastas with. Either 'Fasta' or 'ParsedFasta'
         """
-        all_lines = raw.splitlines()
-        headers = []
-        headers_idx = []
-        for i, l in enumerate(all_lines):
-            if l[0] == '>':
-                headers.append(l)
-                headers_idx.append(i)
-        headers_idx.append(len(all_lines))
-        headers_idx = iter(headers_idx)
-        prev_idx = next(headers_idx) + 1
-        for next_idx, header in zip(headers_idx, headers):
-            sequence = "".join(all_lines[prev_idx:next_idx])
-            self.append(fasta(header, sequence))
-            prev_idx = next_idx + 1
+        self.extend(raw2fastas(raw.splitlines()))
 
     def write(self, path, mode='w+', chunk_size=80):
         """Write file under the given path."""
@@ -95,7 +100,7 @@ class Fastas(list):
         return len(self.fasta_types()) == 1
 
 
-def fastas(path_url):
+def fastas(path_url, verbose=False):
     """Read in a fasta object from a given path.
 
     Args:
@@ -107,5 +112,7 @@ def fastas(path_url):
     try:
         fs.read(path_url)
     except FileNotFoundError:
+        if verbose:
+            print('File missing, trying out a url.')
         fs.parse(download(path_url))
     return fs

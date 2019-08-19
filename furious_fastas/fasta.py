@@ -19,6 +19,12 @@ class Fasta(object):
     def __hash__(self):
         return hash((self.sequence, self.header))
 
+    def __eq__(self, other):
+        return self.header == other.header and self.sequence == other.sequence
+
+    def __len__(self):
+        return len(self.sequence)
+
 
 class ParsedFasta(Fasta):
     def __init__(self, accession, entry, description, sequence):
