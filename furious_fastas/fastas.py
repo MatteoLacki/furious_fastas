@@ -111,7 +111,7 @@ def fastas(path_url, verbose=False):
     fs = Fastas()
     try:
         fs.read(path_url)
-    except FileNotFoundError:
+    except (FileNotFoundError, OSError):
         if verbose:
             print('File missing, trying out a url.')
         fs.parse(download(path_url))
