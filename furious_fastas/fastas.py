@@ -4,6 +4,22 @@ from collections import Counter
 from .fasta import fasta
 from .download import download
 
+
+def iter_chunks(x, chunk_size=80):
+    """Iterate over chunks of a given size.
+
+    The last chunk can be smaller than others.
+
+    Args:
+        x (str or list): or something that supports get operation.
+        chunk_size (int): size of chunks."""
+    k = len(x) // chunk_size
+    i = 0
+    for i in range(k):
+        yield x[i*chunk_size:(i+1)*chunk_size]
+    yield x[(i+1)*chunk_size:]
+
+
 class FastasAlreadyReversedError(Exception):
     pass
 
@@ -37,11 +53,16 @@ class Fastas(list):
             self.append(fasta(header, sequence))
             prev_idx = next_idx + 1
 
-    def write(self, path, mode='w+'):
+    def write(self, path, mode='w+', chunk_size=80):
         """Write file under the given path."""
         with open(path, mode) as h:
             for f in self:
-                h.write("{}\n{}\n".format(f.header, f.sequence))
+                if chunk_size:
+                    h.write(f.header + '\n')
+                    for chunk in iter_chunks(f.sequence, chunk_size):
+                        h.write(chunk + '\n')
+                else:
+                    h.write("{}\n{}\n".format(f.header, f.sequence))
 
     def repeat_stats(self):
         """Get the distribution of shared fasta sequences."""

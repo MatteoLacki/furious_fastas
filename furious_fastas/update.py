@@ -7,7 +7,7 @@ from furious_fastas.fastas import fastas, Fastas
 from furious_fastas.contaminants import contaminants
 
 
-def update_fastas(db_path, species2url, verbose=True):
+def update_plgs_peaks_fastas(db_path, species2url, verbose=True):
     """Update fasta files.
 
     Args:
