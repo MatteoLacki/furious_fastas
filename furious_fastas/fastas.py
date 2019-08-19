@@ -69,6 +69,10 @@ class Fastas(list):
                 else:
                     h.write("{}\n{}\n".format(f.header, f.sequence))
 
+    def download(self, url):
+        """Append fastas found at a given url."""
+        self.parse(download(url))
+
     def repeat_stats(self):
         """Get the distribution of shared fasta sequences."""
         return dict(Counter(Counter(f.sequence for f in self).values()))
@@ -111,7 +115,7 @@ def fastas(path_url, verbose=False):
     fs = Fastas()
     try:
         fs.read(path_url)
-    except FileNotFoundError:
+    except (FileNotFoundError, OSError):
         if verbose:
             print('File missing, trying out a url.')
         fs.parse(download(path_url))

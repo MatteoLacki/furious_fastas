@@ -1,0 +1,3 @@
+ecoli http://www.uniprot.org/uniprot/?query=reviewed:yes+AND+organism:83333&format=fasta
+leishmania http://www.uniprot.org/uniprot/?query=organism:5664&format=fasta
+el http://www.uniprot.org/uniprot/?query=reviewed:yes+AND+organism:83333&format=fasta  http://www.uniprot.org/uniprot/?query=organism:5664&format=fasta

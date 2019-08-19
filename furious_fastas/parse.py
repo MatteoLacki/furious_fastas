@@ -5,9 +5,11 @@ def parse_settings(path):
         path (str): Path to the files.
         prepend (str): What is prepended to the url (like most of it).
     Yields:
-        tuple : name and full url of the species.
+        tuple : name and a tuple with urls to download and concatenate.
     """
     with open(path, 'r') as f:
         for l in f:
-            name, url = l.split()
-            yield name, url
+            l = l.split()
+            name = l[0]
+            urls = tuple(l[1:])
+            yield name, urls
