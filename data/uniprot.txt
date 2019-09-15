@@ -1,0 +1,7 @@
+human http://www.uniprot.org/uniprot/?query=reviewed:yes+AND+organism:9606&format=fasta
+yeast http://www.uniprot.org/uniprot/?query=organism:643680&format=fasta
+ecoli http://www.uniprot.org/uniprot/?query=reviewed:yes+AND+organism:83333&format=fasta
+wheat http://www.uniprot.org/uniprot/?query=organism:4565&format=fasta
+mouse http://www.uniprot.org/uniprot/?query=reviewed:yes+AND+organism:10090&format=fasta
+leishmania http://www.uniprot.org/uniprot/?query=organism:5664&format=fasta
+hye http://www.uniprot.org/uniprot/?query=reviewed:yes+AND+organism:9606&format=fasta http://www.uniprot.org/uniprot/?query=organism:643680&format=fasta http://www.uniprot.org/uniprot/?query=reviewed:yes+AND+organism:83333&format=fasta
