@@ -1,6 +1,8 @@
+from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
+import logging
 from pathlib import Path
 from shutil import move as mv
-from datetime import datetime
 
 from .contaminants import contaminants
 from .download import download
@@ -8,15 +10,16 @@ from .fastas import Fastas
 from .time_ops import datestr2date, now
 
 
-def update_plgs_peaks_fastas(db_path, species2url, verbose=True):
+logger = logging.getLogger(__name__)
+
+
+def update_plgs_peaks_fastas(db_path, species2url):
     """Update fasta files.
 
     Args:
         db_path (str): Path to the folder where we will store the files.
         species2url (iterable of tuples): Each tuple consists of the species name and its Uniprot url.
         contaminants (Fastas): Fastas with contaminants.
-        verbose (boolean): Be verbose.
-    
     """
     if db_path == '.':
         db_path = Path.cwd()
@@ -35,10 +38,14 @@ def update_plgs_peaks_fastas(db_path, species2url, verbose=True):
 
     # avoid multiple downloads of the same files
     species2url = dict(species2url)
-    if verbose:
-        print("Downloading files.")
+    logger.info("Downloading files.")
+
     url2raw = {url for urls in species2url.values() for url in urls}
-    url2raw = {url:download(url) for url in url2raw}
+
+    with ThreadPoolExecutor() as e:
+        url2raw = dict(zip(url2raw, e.map(download, url2raw)))
+        # url2raw = dict(e.map(lambda x: (x[0], download(x[1]))))
+        # {url:download(url) for url in url2raw}
 
     for name, urls in species2url.items():
         if verbose:
@@ -53,5 +60,5 @@ def update_plgs_peaks_fastas(db_path, species2url, verbose=True):
         fs.reverse()
         fs.write(latest_NOW_PLGS/file)
     
-    if verbose:
-        print("Succeeeded!")
+    logger.info("Succeeeded!")
+
