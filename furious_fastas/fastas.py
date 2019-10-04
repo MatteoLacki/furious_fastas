@@ -87,6 +87,10 @@ class Fastas(list):
         else:
             raise FastasAlreadyReversedError()
 
+    def get_reversed(self):
+        """Return a reversed copy of the fasta."""
+        return Fastas(f.reverse(i+1) for i,f in enumerate(self))
+
     def __add__(self, other):
         """Sum fastas."""
         out = self.__class__()
