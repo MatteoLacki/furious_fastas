@@ -10,7 +10,7 @@ class Fasta(object):
     def __str__(self):
         return self.sequence
 
-    def reverse(self):
+    def reverse(self, *args, **kwds):
         return self.__class__(self.header+" REVERSED", self.sequence[::-1])
 
     def copy(self):
