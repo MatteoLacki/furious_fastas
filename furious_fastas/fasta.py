@@ -5,7 +5,8 @@ class Fasta(object):
         self.header = header
 
     def __repr__(self):
-        return "{}({})".format(self.__class__.__name__, self.header)
+        # return "{}({})".format(self.__class__.__name__, self.header)
+        return self.header
 
     def __str__(self):
         return self.sequence
@@ -24,6 +25,33 @@ class Fasta(object):
 
     def __len__(self):
         return len(self.sequence)
+
+    def __contains__(self, other):
+        """Check if the other protein is a subsequence.
+
+        Args:
+            other (str,Fasta): the other Fasta or a sequence.
+        Returns:
+            boolean: Is a sequence?"""
+        return str(other) in self.sequence
+
+    def where_is(self, other):
+        """Find pairs of indices that the other Fasta's sequence occupies in the sequence.
+
+        Used to establish positions of subsequences.
+
+        Args:
+            other (str,Fasta): the other Fasta or a sequence.
+        """
+        s = str(other) # subsequence
+        n = len(s)
+        if n > 0:
+            i = 0
+            for h in self.sequence.split(s)[0:-1]:
+                i += len(h)
+                yield i,i+n
+                i += n
+
 
 
 class ParsedFasta(Fasta):
