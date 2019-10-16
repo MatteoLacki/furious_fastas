@@ -1,3 +1,6 @@
+from .seq_ops import covered_area
+
+
 class Fasta(object):
     """Class representing one particular fasta object."""
     def __init__(self, header, sequence):
@@ -52,6 +55,17 @@ class Fasta(object):
                 yield i,i+n
                 i += n
 
+    def coverage(self, others):
+        """Calculate the coverage of the current fasta with other fastas or sequences.
+
+        Args:
+            others (iterable of str of Fasta, or Fastas): What should be covering the current fasta?
+        Returns:
+            float: Coverage (between 0 and 1) of that sequence by others.
+        """
+        A = covered_area(sorted((s,e) for other in others for s,e in self.where_is(other)))
+        L = len(self.sequence)
+        return A/L
 
 
 class ParsedFasta(Fasta):
