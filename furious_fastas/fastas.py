@@ -1,5 +1,6 @@
 """Classes representing collections of fastas."""
 from collections import Counter
+from pathlib import Path
 
 from .fasta import fasta
 from .download import download
@@ -60,6 +61,8 @@ class Fastas(list):
 
     def write(self, path, mode='w+', chunk_size=80):
         """Write file under the given path."""
+        path = Path(path).expanduser().resolve()
+        path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, mode) as h:
             for f in self:
                 if chunk_size:
