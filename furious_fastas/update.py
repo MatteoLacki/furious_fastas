@@ -39,10 +39,9 @@ def update_plgs_peaks_fastas(db_path, species2url, verbose=True):
     if verbose:
         print("Downloading files.")
     url2raw = {url for urls in species2url.values() for url in urls}
-
-    with ThreadPoolExecutor() as e:
-        ulr2raw = dict(zip(ulr2raw, e.map(download, url2raw)))
-    # url2raw = {url:download(url) for url in url2raw}
+    # with ThreadPoolExecutor() as e:
+    #     ulr2raw = dict(zip(ulr2raw, e.map(download, url2raw)))
+    url2raw = {url:download(url) for url in url2raw}
 
     for name, urls in species2url.items():
         if verbose:
