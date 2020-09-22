@@ -1,9 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor
-<<<<<<< HEAD
-from datetime import datetime
 import logging
-=======
->>>>>>> origin/master
 from pathlib import Path
 from shutil import move as mv
 
