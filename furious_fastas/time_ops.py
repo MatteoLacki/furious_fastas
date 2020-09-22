@@ -11,4 +11,4 @@ def datestr2date(datestr):
 
 def now():
     d = datetime.now()
-    return "{}-{}-{}_{}-{}-{}".format(d.year,d.month,d.day,d.hour,d.minute,d.second)
+    return f"{d.year}-{str(d.month).zfill(2)}-{str(d.day).zfill(2)}_{str(d.hour).zfill(2)}-{str(d.minute).zfill(2)}-{str(d.second).zfill(2)}"

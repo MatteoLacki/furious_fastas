@@ -119,7 +119,7 @@ class TRemblFasta(ParsedFasta):
 
 class NCBIgeneralFasta(ParsedFasta):
     def reverse(self, i=''):
-        return Fasta('>gnl|db|REVERSE{} REVERSE{} Reversed Sequence {}'.format(str(i), str(i), str(i)), self.sequence[::-1])        
+        return Fasta('>gnl|db|REVERSE{} Reversed Sequence {}'.format(str(i), str(i), str(i)), self.sequence[::-1])        
     @property
     def header(self):
         return ">gnl|db|{} {} {}".format(self.accession, self.entry, self.description)
