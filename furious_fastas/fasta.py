@@ -14,10 +14,12 @@ class Fasta(object):
     def __str__(self):
         return self.sequence
 
-    def reverse(self, *args, **kwds):
+    def reverse(self):
+        """Reverse a fasta, customizing the header."""
         return self.__class__(self.header+" REVERSED", self.sequence[::-1])
 
     def copy(self):
+        """Copy a fasta object."""
         return self.__class__(self.header, self.sequence)
 
     def __hash__(self):
@@ -76,12 +78,15 @@ class ParsedFasta(Fasta):
         self.sequence = sequence
 
     def to_swissprot(self):
+        """Copy a fasta in Swiss Prot format."""
         return SwissProtFasta(self.accession, self.entry, self.description, self.sequence)
 
     def to_trembl(self):
+        """Copy a fasta in TRembl format."""
         return TRemblFasta(self.accession, self.entry, self.description, self.sequence)
 
     def to_ncbi_general(self):
+        """Copy a fasta in NCBI general format."""
         return NCBIgeneralFasta(self.accession, self.entry, self.description, self.sequence)
 
     def __repr__(self):
@@ -94,6 +99,7 @@ class ParsedFasta(Fasta):
 
 class SwissProtFasta(ParsedFasta):
     def reverse(self, i=''):
+        """Reverse a fasta, customizing the header."""
         return Fasta('>REVERSE{} Reversed Sequence {}'.format(str(i), str(i)), self.sequence[::-1])
 
     @property
@@ -103,6 +109,7 @@ class SwissProtFasta(ParsedFasta):
 
 class TRemblFasta(ParsedFasta):
     def reverse(self, i=''):
+        """Reverse a fasta, customizing the header."""
         return Fasta('>REVERSE{} Reversed Sequence {}'.format(str(i), str(i)), self.sequence[::-1])
 
     @property
@@ -119,6 +126,13 @@ class NCBIgeneralFasta(ParsedFasta):
 
 
 def parse_header(h):
+    """Parse a fasta header.
+
+    Args:
+        h (str): the header.
+    Returns:
+        tuple: accession, entry, description and database tag.
+     """
     if ">gnl|db|" in h:
         h = h.replace(">gnl|db|","")
         accession, entry = h.split(' ')[:2]
@@ -150,7 +164,9 @@ fasta_formats = {'>sp|':      SwissProtFasta,
                  '>tr|':      TRemblFasta,
                  '>gnl|db|':  NCBIgeneralFasta}
 
+
 def fasta(header, sequence):
+    """Create a fasta object from header and sequence."""
     try:
         accession, entry, description, db = parse_header(header)
         fasta_format = fasta_formats.get(db, Fasta)

@@ -1,5 +1,6 @@
 """Classes representing collections of fastas."""
 from collections import Counter
+from pathlib import Path
 
 from .fasta import fasta
 from .download import download
@@ -60,6 +61,8 @@ class Fastas(list):
 
     def write(self, path, mode='w+', chunk_size=80):
         """Write file under the given path."""
+        path = Path(path).expanduser().resolve()
+        path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, mode) as h:
             for f in self:
                 if chunk_size:
@@ -102,10 +105,16 @@ class Fastas(list):
         return "{}({})".format(self.__class__.__name__, len(self))
 
     def fasta_types(self):
+        """Count occurences of different fastas."""
         return dict(Counter(f.__class__.__name__ for f in self))
 
     def same_fasta_types(self):
-        return len(self.fasta_types()) == 1
+        """Check if all fastas are of the same type."""
+        return len(self.fasta_types()) in (0,1)
+
+    def download(self, url):
+        """Download the query/species sequences from url."""
+        self.parse(download(url))
 
 
 def fastas(path_url, verbose=False):
