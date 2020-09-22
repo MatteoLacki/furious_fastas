@@ -3,3 +3,4 @@ __pycache__
 dist
 todo.md
 .DS_Store
+.python-version
