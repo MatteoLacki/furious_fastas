@@ -54,8 +54,8 @@ def update_plgs_peaks_fastas(db_path,
         if verbose:
             print("\tUpdating {}.".format(name))
         fs = Fastas()
-        for url in urls:
-            fs.parse(url2raw[url])
+        for raw_fastas in url2raw.values():
+            fs.parse(raw_fastas)
         file = "{}_{}_conts_{}_{}.fasta".format(name, str(len(fs)), str(len(contaminants)), NOW)
         fs.extend(contaminants)
         fs.write(latest_NOW_PEAKS/file)

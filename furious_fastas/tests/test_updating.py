@@ -28,7 +28,7 @@ with ThreadPoolExecutor() as e:
 # CPU times: user 2.43 s, sys: 614 ms, total: 3.04 s
 # Wall time: 47.1 s
 folder = Path("/home/matteo/Projects/furious_fastas")
-dict(parse_settings(folder/'data/uniprot.txt'))
+parse_settings(folder/'data/uniprot.txt')
 
 species2url = [('human', (uniprot_url['human'],)),]
 update_plgs_peaks_fastas(folder/'tests', species2url)
