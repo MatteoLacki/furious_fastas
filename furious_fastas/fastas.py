@@ -116,6 +116,9 @@ class Fastas(list):
         """Download the query/species sequences from url."""
         self.parse(download(url))
 
+    def to_ncbi_general(self):
+        return self.__class__(f.to_ncbi_general() for f in self)
+
 
 def fastas(path_url, verbose=False):
     """Read in a fasta object from a given path.

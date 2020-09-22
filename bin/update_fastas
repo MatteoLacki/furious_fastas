@@ -19,5 +19,5 @@ if __name__ == "__main__":
         type=resolve)
     a = parser.parse_args()
     update(db_path=a.db_path,
-           species2url=parse_settings(a.species2url_path),
+           species2urls=parse_settings(a.species2url_path),
            verbose=True)

@@ -2,6 +2,8 @@ from concurrent.futures import ThreadPoolExecutor
 import logging
 from pathlib import Path
 from shutil import move as mv
+from pprint import pprint
+import gzip
 
 from .contaminants import contaminants
 from .download import download
@@ -13,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 def update_plgs_peaks_fastas(db_path,
-                             species2url,
+                             species2urls,
                              verbose=False):
     """Update fasta files.
 
@@ -22,7 +24,7 @@ def update_plgs_peaks_fastas(db_path,
 
     Args:
         db_path (str): Path to the folder where we will store the files.
-        species2url (iterable of tuples): Each tuple consists of the species name and its (potentially several) Uniprot url.
+        species2urls (dict,iterable of tuples): Each tuple consists of the species name and its (potentially several) Uniprot url.
         verbose (boolean): increase verbosity.
     Returns:
         contaminants (Fastas): Fastas with contaminants.
@@ -37,31 +39,43 @@ def update_plgs_peaks_fastas(db_path,
         for f in latest.iterdir():
             mv(src=str(latest/f), dst=str(previous))
     NOW = now()
-    latest_NOW_PEAKS = latest/NOW/'PEAKS'
-    latest_NOW_PLGS = latest/NOW/'PLGS'
-    latest_NOW_PEAKS.mkdir(exist_ok=True, parents=True)
-    latest_NOW_PLGS.mkdir(exist_ok=True, parents=True)
+    latest_NOW = latest/NOW
+    species2urls = dict(species2urls)
 
-    # avoid multiple downloads of the same files
-    species2url = dict(species2url)
     logger.info("Downloading files.")
-
-    url2raw = {url for urls in species2url.values() for url in urls}
+    urls = {url for urls in species2urls.values() for url in urls}
+    if verbose:
+        print('Going to download:')
+        pprint(urls)
     with ThreadPoolExecutor() as e:
-        url2raw = dict(zip(url2raw, e.map(download, url2raw)))
-    
-    for name, urls in species2url.items():
-        if verbose:
-            print("\tUpdating {}.".format(name))
+        raw_fastas = list(e.map(download, urls)) 
+    if verbose: print("Downloaded. Parsing fastas.")
+
+    url2fs = {}
+    for url, raw in zip(urls, raw_fastas):
         fs = Fastas()
-        for raw_fastas in url2raw.values():
-            fs.parse(raw_fastas)
-        file = "{}_{}_conts_{}_{}.fasta".format(name, str(len(fs)), str(len(contaminants)), NOW)
+        fs.parse(raw)
+        url2fs[url] = fs 
+
+    if verbose: print("Parsed. Updating files.")
+    for name, urls in species2urls.items():
+        if verbose: print("\tUpdating {}.".format(name))
+        fs = Fastas()
+        for url in urls:
+            fs += url2fs[url]
+        stem = f"{name}_{len(fs)}_{NOW}"
+        fs.write(latest_NOW/(stem+".fasta"))
+        FS = fs.to_ncbi_general()
+        FS.write(latest_NOW/(stem+"_pipelineFriendly.fasta"))
         fs.extend(contaminants)
-        fs.write(latest_NOW_PEAKS/file)
-        fs = Fastas(f.to_ncbi_general() for f in fs)
+        stem += f"_contaminants_{len(contaminants)}"
+        fs.write(latest_NOW/(stem+".fasta"))
+        FS.extend(contaminants.to_ncbi_general())
+        FS.write(latest_NOW/(stem+"_pipelineFriendly.fasta"))        
         fs.reverse()
-        fs.write(latest_NOW_PLGS/file)
-    
+        stem += f"_reversed"
+        fs.write(latest_NOW/(stem+".fasta"))
+        FS.reverse()
+        FS.write(latest_NOW/(stem+"_pipelineFriendly.fasta"))
     logger.info("Succeeeded!")
 
