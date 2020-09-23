@@ -42,9 +42,9 @@ def fasta_path_gui(db):
     else:
         path = input("Drag'n'drop custom fasta file: ")
 
-    add_contaminants = input('Adding contaminants! Type in anything to stop me or hit ENTER:') == ''
+    add_contaminants = input('\nAdding contaminants! Type in anything to stop me or hit ENTER:') == ''
     print(f"We will{'' if add_contaminants else ' not'} add contaminants to the fastas.")
-    reverse = input('Reversing! Type in anything to stop me or hit ENTER:') == ''
+    reverse = input('\nReversing fastas. Type in anything to stop me or hit ENTER:') == ''
     print(f"We will{'' if reverse else ' not'} reverse the fastas.")
 
     # anti-xor used
@@ -54,12 +54,12 @@ def fasta_path_gui(db):
         raise FileExistsError('There are too many files matchin the criteria in the DB.')
     
     if len(pipelineFriendly) == 1:
-        print(f'We found your fasta in the data base:\n{pipelineFriendly[0]}')
+        print(f'\nWe found your fasta in the data base:\n{pipelineFriendly[0]}')
         if input('Hit ENTER if OK. Otherwise submit a path now:') == '':
             return pipelineFriendly[0]
     else:
         path = pathlib.Path(path)
-        assert path.exists(), "The provided path does not exist or is unreachable."
+        assert path.exists(), "\nThe provided path does not exist or is unreachable."
         print(f'Provided path is not in the data base:\n{path}')
         print('Preparing fastas.')
         return prepare_fasta_file(path, add_contaminants, reverse, True)
