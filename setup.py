@@ -29,7 +29,7 @@ setup(
     #          ['data/contaminants_uniprot_format.fasta']
     # },
     scripts = [
-        "bin/update_fastas",
-        "bin/reverse_fastas"
+        "bin/update_fastas.py",
+        "bin/reverse_fastas.py"
     ]
 )
