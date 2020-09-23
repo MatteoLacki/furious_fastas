@@ -18,6 +18,6 @@ if __name__ == "__main__":
         help="Path to the file mapping species names to urls.",
         type=resolve)
     a = parser.parse_args()
-    update(db_path=a.db_path,
-           species2urls=parse_settings(a.species2url_path),
-           verbose=True)
+    update(db_path = a.db_path,
+           species2urls = parse_settings(a.species2url_path),
+           verbose = True)

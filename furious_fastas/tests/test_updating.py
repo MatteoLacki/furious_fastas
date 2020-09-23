@@ -47,3 +47,4 @@ for name, urls in uniprot.items():
     FS = Fastas(f.to_ncbi_general() for f in fs)
     FS.reverse()
     FS.write(latest_NOW_PLGS/file)
+
