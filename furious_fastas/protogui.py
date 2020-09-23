@@ -20,24 +20,28 @@ def prepare_fasta_file(path, add_contaminants, reverse, verbose=False):
     fs = fastas(path)
     if verbose: print(f'These fastas consist of:\n{fs.fasta_types()}')
     if verbose: print('Translating to NCBI general fasta format.')
-    fastas.to_ncbi_general()
+    fs.to_ncbi_general()
     if add_contaminants: fs.extend(contaminants.to_ncbi_general())
     if reverse: fs.reverse()
     path = path.parent/f"{path.stem}{f'_contaminants_{len(contaminants)}' if add_contaminants else ''}{'_reversed' if reverse else ''}_pipelineFriendly.fasta"
+    if verbose: print(f"Saving the 'pipeline friendly' fasta under:\n{path}")
     fs.write(path)
     return path
 
 
 def fasta_path_gui(db):
     """Get path to the proper fasta file.
-
-    The 
-
+ 
     Args:
-        db (str): 
+        db (str): path with data base. 
     """
     db = pathlib.Path(db)
-    path = input('fastas to use (human|wheat|..|custom path): ')
+    if db.exists():
+        print("Write in or drag'n'drop a path from the explorer.")
+        path = input('fastas to use (human|wheat|..|custom path): ')
+    else:
+        path = input("Drag'n'drop custom fasta file: ")
+
     add_contaminants = input('Adding contaminants! Type in anything to stop me or hit ENTER:') == ''
     print(f"We will{'' if add_contaminants else ' not'} add contaminants to the fastas.")
     reverse = input('Reversing! Type in anything to stop me or hit ENTER:') == ''
