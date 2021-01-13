@@ -1,6 +1,7 @@
 """Classes representing collections of fastas."""
 from collections import Counter
 from pathlib import Path
+import csv
 
 from .fasta import fasta
 from .download import download
@@ -71,6 +72,22 @@ class Fastas(list):
                         h.write(chunk + '\n')
                 else:
                     h.write("{}\n{}\n".format(f.header, f.sequence))
+
+    def write_tsv(self,
+                  path,
+                  fieldnames=('header','sequence'),
+                  delimiter='\t',
+                  quotechar=' ',
+                  quoting=csv.QUOTE_MINIMAL):
+        """Write fasta to a tab separated file."""
+        with open(path, "w", newline='') as file:
+            writer = csv.writer(file,
+                delimiter=delimiter,
+                quotechar=quotechar,
+                quoting=quoting)
+            writer.writerow(fieldnames)
+            for fasta in self:
+                writer.writerow((fasta.header,fasta.sequence))
 
     def download(self, url):
         """Append fastas found at a given url."""

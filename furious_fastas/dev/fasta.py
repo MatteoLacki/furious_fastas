@@ -1,5 +1,6 @@
 from furious_fastas.fasta import Fasta
 
+
 f = Fasta('>test|test', 'PEPTIDEPEPTIDE')
 g = Fasta('>test|test', 'EPTI')
 
