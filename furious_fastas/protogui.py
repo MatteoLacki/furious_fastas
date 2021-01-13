@@ -63,33 +63,12 @@ def check_updated_fastas_folder(folder):
 
 
 
-def get_pipeline_fasta_path(path_or_tag, add_contaminants, reverse,
-                            updated_fastas_folder=None,
-                            verbose=False):
+def ok_fasta_exists(path):
     try:
-        path_or_tag_PATH = pathlib.Path(path_or_tag).expanduser().resolve()
+        path = pathlib.Path(path).expanduser().resolve()
+        return path.exists() and path.is_file()
     except TypeError:
-            raise FileExistsError("This path does not exist.")
-
-    if path_or_tag_PATH.exists() and path_or_tag_PATH.is_file():
-        path = path_or_tag_PATH
-        return prepare_fasta_file(path, add_contaminants, reverse, 
-                                  pipelineFriendly=True,
-                                  verbose=verbose)
-
-    tag = path_or_tag
-    updated_fastas_folder = check_updated_fastas_folder(updated_fastas_folder)
-
-    # anti-xor used
-    pipelineFriendly = [p for p in updated_fastas_folder.glob("*/*_pipelineFriendly.fasta") if (p.stem.split('_',1)[0] == tag) and (not reverse ^ ('reverse' in p.stem)) and (not add_contaminants ^ ('contaminants' in p.stem)) ]
-
-    if len(pipelineFriendly) > 1:
-        raise FileExistsError('There are too many files matchin the criteria in the DB.')
-    
-    if len(pipelineFriendly) == 1:
-        return pipelineFriendly[0]
-
-    raise FileExistsError(f"Tag '{path_or_tag_PATH}' does not exist in {updated_fastas_folder}.")
+        return False
 
 
 
@@ -114,3 +93,87 @@ def fasta_path_gui(updated_fastas_folder=None):
 
     return path_or_tag, updated_fastas_folder, add_contaminants, reverse
 
+
+
+def prompt_path_or_tag():
+    print("Write in or drag'n'drop a path from the explorer.")
+    return input('fastas to use (human|wheat|..|custom path): ') or None    
+
+
+
+def prompt_contaminants():
+    add_contaminants = input('\nAdding contaminants! Type in anything to stop me or hit ENTER:') == ''
+    print(f"We will{'' if add_contaminants else ' not'} add contaminants to the fastas.")
+    return add_contaminants
+
+
+
+def prompt_reverse():
+    reverse = input('\nReversing fastas. Type in anything to stop me or hit ENTER:') == ''
+    print(f"We will{'' if reverse else ' not'} reverse the fastas.")
+    return reverse
+
+
+
+def get_pipeline_fasta_path(tag,
+                            updated_fastas_folder,
+                            add_contaminants,
+                            reverse,
+                            verbose=False):
+    updated_fastas_folder = check_updated_fastas_folder(updated_fastas_folder)
+
+    # anti-xor used
+    pipelineFriendly = [p for p in updated_fastas_folder.glob("*/*_pipelineFriendly.fasta") if (p.stem.split('_',1)[0] == tag) and (not reverse ^ ('reverse' in p.stem)) and (not add_contaminants ^ ('contaminants' in p.stem)) ]
+
+    if len(pipelineFriendly) > 1:
+        raise FileExistsError('There are too many files matchin the criteria in the DB.')
+
+    if len(pipelineFriendly) == 1:
+        return pipelineFriendly[0]
+
+    raise FileExistsError(f"Tag '{path_or_tag_PATH}' does not exist in {updated_fastas_folder}.")
+
+
+
+def fasta_file(path_or_tag=None,
+               updated_fastas_folder=None,
+               add_contaminants=None,
+               reverse=None):
+    """Cast fastas into NCBI general format, add contaminants and reverse.
+
+    Args:
+        path_or_tag (str): Path to the fasta of interest.
+        updated_fastas_folder (str): Folder with updated fastas.
+        add_contaminants (boolean): should we add in standard contaminants?
+        reverse (boolean): should we add in reversed sequences?
+    Returns:
+        pathlib.Path: Path to the prepared fasta file.
+    """
+    if path_or_tag is None:
+        path_or_tag = prompt_path_or_tag()
+
+    path = None
+    if ok_fasta_exists(path_or_tag): # it's an existing path.
+        path = pathlib.Path(path_or_tag).expanduser().resolve()
+        if "_pipelineFriendly" in path.stem:
+            return path
+        # else: # an existing path that is not ready for pipeline.
+
+    if add_contaminants is None:
+        add_contaminants = prompt_contaminants()
+
+    if reverse is None: # gui needed
+        reverse = prompt_reverse()
+
+    if path is None: # path_or_tag == tag
+        return get_pipeline_fasta_path(path_or_tag,
+                                       updated_fastas_folder,
+                                       add_contaminants,
+                                       reverse,
+                                       verbose=True)
+    else:
+        return prepare_fasta_file(path,
+                                  add_contaminants,
+                                  reverse,
+                                  pipelineFriendly=True,
+                                  verbose=True)
